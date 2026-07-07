@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calculadora de Portais Minecraft</title>
+
+<style>
+body {
+font-family: Arial, sans-serif;
+background: #101014;
+color: white;
+padding: 20px;
+}
+
+.box {
+max-width: 500px;
+margin: auto;
+background: #1b1b24;
+padding: 20px;
+border-radius: 12px;
+}
+
+input, select, button {
+width: 100%;
+padding: 12px;
+margin: 8px 0;
+border-radius: 8px;
+border: none;
+font-size: 16px;
+}
+
+button {
+background: #7b2cff;
+color: white;
+font-weight: bold;
+cursor: pointer;
+}
+
+.resultado {
+margin-top: 20px;
+background: #292936;
+padding: 15px;
+border-radius: 10px;
+line-height: 1.6;
+}
+
+h1 {
+text-align: center;
+color: #b58cff;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h1>Portal Nether</h1>
+
+<label>Você quer ir para qual lugar do mundo normal?</label>
+<input type="number" id="x" placeholder="Coordenada X do destino">
+<input type="number" id="z" placeholder="Coordenada Z do destino">
+
+<button onclick="calcularPortal()">Calcular portal</button>
+
+<div class="resultado" id="resultado">
+Coloque as coordenadas para gerar o passo a passo.
+</div>
+</div>
+
+<script>
+function calcularPortal() {
+const x = Number(document.getElementById("x").value);
+const z = Number(document.getElementById("z").value);
+const resultado = document.getElementById("resultado");
+
+if (isNaN(x) || isNaN(z)) {
+resultado.innerHTML = "Coloque coordenadas válidas.";
+return;
+}
+
+const netherX = Math.round(x / 8);
+const netherZ = Math.round(z / 8);
+
+resultado.innerHTML = `
+<h2>Resultado</h2>
+
+<p>Destino no mundo normal:</p>
+<b>X: {z}</b>
+
+<p>Você deve criar o portal no Nether em:</p>
+<b>X: {netherZ}</b>
+
+<h3>Passo a passo</h3>
+
+<p>1. Vá até o local do mundo normal onde você quer chegar.</p>
+<p>2. Anote as coordenadas X e Z.</p>
+<p>3. Divida o X e o Z por 8.</p>
+<p>4. Vá para o Nether.</p>
+<p>5. No Nether, vá até:</p>
+<b>X: {netherZ}</b>
+<p>6. Construa um portal nesse lugar.</p>
+<p>7. Quando entrar nele, você vai sair perto do destino no mundo normal.</p>
+
+<hr>
+
+<p><b>Fórmula usada:</b></p>
+<p>Mundo normal ÷ 8 = Nether</p>
+`;
+}
+</script>
+
+</body>
+</html>
