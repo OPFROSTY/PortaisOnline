@@ -1,111 +1,196 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculadora de Portais Minecraft</title>
 
 <style>
-body {
-font-family: Arial, sans-serif;
-background: #101014;
-color: white;
-padding: 20px;
-}
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #111118;
+    color: white;
+    padding: 20px;
+  }
 
-.box {
-max-width: 500px;
-margin: auto;
-background: #1b1b24;
-padding: 20px;
-border-radius: 12px;
-}
+  .box {
+    max-width: 650px;
+    margin: auto;
+    background: #1c1c27;
+    padding: 22px;
+    border-radius: 16px;
+  }
 
-input, select, button {
-width: 100%;
-padding: 12px;
-margin: 8px 0;
-border-radius: 8px;
-border: none;
-font-size: 16px;
-}
+  h1 {
+    color: #a970ff;
+    text-align: center;
+  }
 
-button {
-background: #7b2cff;
-color: white;
-font-weight: bold;
-cursor: pointer;
-}
+  label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
 
-.resultado {
-margin-top: 20px;
-background: #292936;
-padding: 15px;
-border-radius: 10px;
-line-height: 1.6;
-}
+  input, select, button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 7px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
 
-h1 {
-text-align: center;
-color: #b58cff;
-}
+  input {
+    background: #fff;
+    color: #000;
+  }
+
+  button {
+    margin-top: 20px;
+    background: #7b2cff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .resultado {
+    margin-top: 25px;
+    background: #2a2a38;
+    padding: 20px;
+    border-radius: 14px;
+    line-height: 1.7;
+  }
+
+  .coord {
+    background: #111118;
+    padding: 12px;
+    border-radius: 10px;
+    margin: 10px 0;
+    font-size: 18px;
+  }
+
+  .aviso {
+    color: #ffcc66;
+  }
+
+  small {
+    color: #bbb;
+  }
 </style>
 </head>
+
 <body>
 
 <div class="box">
-<h1>Portal Nether</h1>
+  <h1>Calculadora de Portais</h1>
 
-<label>Você quer ir para qual lugar do mundo normal?</label>
-<input type="number" id="x" placeholder="Coordenada X do destino">
-<input type="number" id="z" placeholder="Coordenada Z do destino">
+  <label>O que você quer calcular?</label>
+  <select id="modo">
+    <option value="overworld-nether">Quero chegar em um lugar do mundo normal</option>
+    <option value="nether-overworld">Tenho uma coordenada no Nether</option>
+  </select>
 
-<button onclick="calcularPortal()">Calcular portal</button>
+  <label>Coordenada X</label>
+  <input type="text" inputmode="text" id="x" placeholder="Exemplo: -41">
 
-<div class="resultado" id="resultado">
-Coloque as coordenadas para gerar o passo a passo.
-</div>
+  <label>Coordenada Y opcional</label>
+  <input type="text" inputmode="text" id="y" placeholder="Exemplo: 64">
+
+  <label>Coordenada Z</label>
+  <input type="text" inputmode="text" id="z" placeholder="Exemplo: -331">
+
+  <label>Nome do lugar opcional</label>
+  <input type="text" id="nome" placeholder="Exemplo: Base, Vila, Farm, Stronghold">
+
+  <button onclick="calcular()">Calcular portal</button>
+
+  <div class="resultado" id="resultado">
+    Coloque as coordenadas e clique em calcular.
+  </div>
 </div>
 
 <script>
-function calcularPortal() {
-const x = Number(document.getElementById("x").value);
-const z = Number(document.getElementById("z").value);
-const resultado = document.getElementById("resultado");
-
-if (isNaN(x) || isNaN(z)) {
-resultado.innerHTML = "Coloque coordenadas válidas.";
-return;
+function pegarNumero(id) {
+  const valor = document.getElementById(id).value.replace(",", ".").trim();
+  return Number(valor);
 }
 
-const netherX = Math.round(x / 8);
-const netherZ = Math.round(z / 8);
+function calcular() {
+  const modo = document.getElementById("modo").value;
+  const x = pegarNumero("x");
+  const y = document.getElementById("y").value.trim();
+  const z = pegarNumero("z");
+  const nome = document.getElementById("nome").value.trim();
+  const resultado = document.getElementById("resultado");
 
-resultado.innerHTML = `
-<h2>Resultado</h2>
+  if (isNaN(x) || isNaN(z)) {
+    resultado.innerHTML = `
+      <h2>Erro</h2>
+      <p class="aviso">Coloque pelo menos o X e o Z corretamente.</p>
+      <p>Exemplo: X -41 e Z -331</p>
+    `;
+    return;
+  }
 
-<p>Destino no mundo normal:</p>
-<b>X: {z}</b>
+  let finalX, finalZ, titulo, explicacao;
 
-<p>Você deve criar o portal no Nether em:</p>
-<b>X: {netherZ}</b>
+  if (modo === "overworld-nether") {
+    finalX = Math.round(x / 8);
+    finalZ = Math.round(z / 8);
+    titulo = "Portal que você deve fazer no Nether";
+    explicacao = "No Minecraft, 1 bloco no Nether vale 8 blocos no mundo normal.";
+  } else {
+    finalX = Math.round(x * 8);
+    finalZ = Math.round(z * 8);
+    titulo = "Lugar correspondente no mundo normal";
+    explicacao = "Para sair do Nether para o mundo normal, multiplica X e Z por 8.";
+  }
 
-<h3>Passo a passo</h3>
+  resultado.innerHTML = `
+    <h2>Resultado ${nome ? "para " + nome : ""}</h2>
 
-<p>1. Vá até o local do mundo normal onde você quer chegar.</p>
-<p>2. Anote as coordenadas X e Z.</p>
-<p>3. Divida o X e o Z por 8.</p>
-<p>4. Vá para o Nether.</p>
-<p>5. No Nether, vá até:</p>
-<b>X: {netherZ}</b>
-<p>6. Construa um portal nesse lugar.</p>
-<p>7. Quando entrar nele, você vai sair perto do destino no mundo normal.</p>
+    <p>${explicacao}</p>
 
-<hr>
+    <p>Coordenada que você colocou:</p>
+    <div class="coord">
+      X: ${x}<br>
+      ${y ? "Y: " + y + "<br>" : ""}
+      Z: ${z}
+    </div>
 
-<p><b>Fórmula usada:</b></p>
-<p>Mundo normal ÷ 8 = Nether</p>
-`;
+    <p><b>${titulo}:</b></p>
+    <div class="coord">
+      X: ${finalX}<br>
+      ${y ? "Y: " + y + " ou uma altura segura<br>" : "Y: escolha uma altura segura<br>"}
+      Z: ${finalZ}
+    </div>
+
+    <h3>Passo a passo</h3>
+
+    <p>1. Vá até o lugar que você quer conectar.</p>
+    <p>2. Aperte F3 no Java ou veja as coordenadas no Bedrock.</p>
+    <p>3. Anote X e Z.</p>
+    <p>4. Coloque essas coordenadas aqui no site.</p>
+    <p>5. Entre no Nether.</p>
+    <p>6. Vá até X: <b>${finalX}</b> e Z: <b>${finalZ}</b>.</p>
+    <p>7. Faça um portal nesse ponto.</p>
+    <p>8. Acenda o portal e entre nele.</p>
+
+    <h3>Dica importante</h3>
+    <p class="aviso">
+      Se já tiver outro portal muito perto, o Minecraft pode conectar no portal errado.
+      Se isso acontecer, quebre o portal errado ou faça o novo portal mais certinho na coordenada.
+    </p>
+
+    <h3>Fórmula usada</h3>
+    <p>
+      Mundo normal para Nether: <b>X ÷ 8</b> e <b>Z ÷ 8</b><br>
+      Nether para mundo normal: <b>X × 8</b> e <b>Z × 8</b>
+    </p>
+  `;
 }
 </script>
 
